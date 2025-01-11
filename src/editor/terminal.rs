@@ -1,9 +1,17 @@
 use crossterm::cursor::{Hide, MoveTo, Show};
+use crossterm::style::Print;
 use crossterm::terminal::{
-    disable_raw_mode, enable_raw_mode, Clear, ClearType, EnterAlternateScreen, LeaveAlternateScreen,
+    disable_raw_mode, enable_raw_mode, size, Clear, ClearType, EnterAlternateScreen,
+    LeaveAlternateScreen,
 };
 use crossterm::{queue, Command};
 use std::io::{self, stdout, Write};
+
+#[derive(Copy, Clone, Default)]
+pub struct Size {
+    pub width: usize,
+    pub height: usize,
+}
 
 #[derive(Copy, Clone, Default)]
 pub struct Position {
@@ -27,6 +35,11 @@ impl Terminal {
         Self::enter_alt_screen()?;
         Self::clear_screen()?;
         Self::flush()?;
+        Ok(())
+    }
+
+    pub fn print_line(line: &str) -> Result<(), io::Error> {
+        Self::queue_command(Print(line))?;
         Ok(())
     }
 
@@ -58,6 +71,14 @@ impl Terminal {
     pub fn clear_screen() -> Result<(), io::Error> {
         Self::queue_command(Clear(ClearType::All))?;
         Ok(())
+    }
+
+    pub fn size() -> Result<Size, io::Error> {
+        let (width_u16, height_u16) = size()?;
+        Ok(Size {
+            width: width_u16 as usize,
+            height: height_u16 as usize,
+        })
     }
 
     pub fn flush() -> Result<(), io::Error> {

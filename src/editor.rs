@@ -5,9 +5,13 @@ use std::io;
 mod terminal;
 use terminal::{Position, Terminal};
 
+mod view;
+use view::View;
+
 #[derive(Default)]
 pub struct Editor {
     quit: bool,
+    view: View,
 }
 
 impl Editor {
@@ -44,6 +48,7 @@ impl Editor {
 
     fn refresh_screen(&self) {
         let _ = Terminal::hide_cursor();
+        self.view.render();
         let _ = Terminal::move_cursor_to_pos(Position { col: 0, row: 0 });
         let _ = Terminal::show_cursor();
         let _ = Terminal::flush();
