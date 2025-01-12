@@ -1,5 +1,6 @@
 use super::terminal::{Size, Terminal};
-use std::io;
+
+const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 // #[derive(Default)]
 pub struct View {
@@ -14,12 +15,26 @@ impl View {
         }
 
         for row in 0..height {
-            let _ = Terminal::print_line("~");
-
-            if row < height - 1 {
-                let _ = Terminal::print_line("\r\n");
+            if row == height / 3 {
+                Self::render_line(row, &Self::build_welcome_message(width));
+            } else {
+                Self::render_line(row, "~");
             }
         }
+    }
+
+    fn build_welcome_message(width: usize) -> String {
+        let n_a_v = format!("Oxid -- version {}", VERSION);
+        let padding = (width - n_a_v.len()) / 2;
+
+        let msg = format!("~{}{}", " ".repeat(padding.saturating_sub(1)), n_a_v);
+
+        msg
+    }
+
+    fn render_line(at: usize, line: &str) {
+        let result = Terminal::print_row(at, line);
+        debug_assert!(result.is_ok(), "Failed to render line");
     }
 }
 

@@ -39,7 +39,7 @@ impl Editor {
                 code, modifiers, ..
             }) => match (code, modifiers) {
                 (KeyCode::Char('q'), KeyModifiers::CONTROL) => self.quit = true,
-                (KeyCode::Char(char), _) => println!("char: {:?}", char),
+                // (KeyCode::Char(char), _) => println!("char: {:?}", char),
                 _ => {}
             },
             _ => {}

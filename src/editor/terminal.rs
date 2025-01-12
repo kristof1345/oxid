@@ -38,8 +38,15 @@ impl Terminal {
         Ok(())
     }
 
-    pub fn print_line(line: &str) -> Result<(), io::Error> {
+    pub fn print(line: &str) -> Result<(), io::Error> {
         Self::queue_command(Print(line))?;
+        Ok(())
+    }
+
+    pub fn print_row(row: usize, line: &str) -> Result<(), io::Error> {
+        Self::move_cursor_to_pos(Position { row, col: 0 })?;
+        Self::clear_line()?;
+        Self::print(line)?;
         Ok(())
     }
 
@@ -70,6 +77,11 @@ impl Terminal {
 
     pub fn clear_screen() -> Result<(), io::Error> {
         Self::queue_command(Clear(ClearType::All))?;
+        Ok(())
+    }
+
+    pub fn clear_line() -> Result<(), io::Error> {
+        Self::queue_command(Clear(ClearType::CurrentLine))?;
         Ok(())
     }
 
